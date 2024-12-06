@@ -35,6 +35,8 @@ def get_selected_row(event):
         e2.insert(END, selected_tuple[2])  # Last Name
         e3.insert(END, selected_tuple[3])  # Term
         e4.insert(END, selected_tuple[4])  # GPA
+        e5.insert(END, selected_tuple[6])  # Course
+        e6.insert(END, selected_tuple[7])  # Teacher
 
 
 # Command functions
@@ -66,7 +68,9 @@ def view_log_command():
         "term": "Term",
         "gpa": "GPA",
         "grade": "Grade",
-        "id": "ID"
+        "id": "ID",
+        "course": "Course",
+        "teacher": "Teacher"
     }
 
     # Create a new popup window
@@ -118,14 +122,14 @@ def view_log_command():
 
 def search_command():
     tree.delete(*tree.get_children())
-    for row in backend.search(fn.get(), ln.get(), term.get(), gpa.get()):
+    for row in backend.search(fn.get(), ln.get(), term.get(), gpa.get(), course.get(), teacher.get()):
         tree.insert("", "end", values=row)
     clear_entries()
 
 
 def add_command():
     if fn.get() and ln.get() and term.get() and gpa.get():
-        backend.insert(fn.get(), ln.get(), term.get(), gpa.get())
+        backend.insert(fn.get(), ln.get(), term.get(), gpa.get(), course.get(), teacher.get())
         clear_entries()
         view_command()
         messagebox.showinfo("Success", "Student added successfully!")
@@ -135,7 +139,7 @@ def add_command():
 
 def update_command():
     if selected_tuple:
-        backend.update(selected_tuple[0], fn.get(), ln.get(), term.get(), gpa.get())
+        backend.update(selected_tuple[0], fn.get(), ln.get(), term.get(), gpa.get(), course.get(), teacher.get())
         clear_entries()
         view_command()
         messagebox.showinfo("Success", "Student updated successfully!")
@@ -164,6 +168,8 @@ def clear_entries():
     e2.delete(0, END)
     e3.delete(0, END)
     e4.delete(0, END)
+    e5.delete(0, END)
+    e6.delete(0, END)
 
 
 def clear_command():
@@ -182,6 +188,8 @@ fn = StringVar()
 ln = StringVar()
 term = StringVar()
 gpa = StringVar()
+course = StringVar()
+teacher = StringVar()
 
 # Frames for better layout
 top_frame = Frame(wind, pady=10)
@@ -201,10 +209,6 @@ title_label = Label(top_frame, text="Student Database", font=("Arial", 20, "bold
 title_label.pack()
 
 # Input labels and entry fields
-Label(middle_frame, text="ID").grid(row=0, column=0, padx=5, pady=5, sticky=W)
-e1 = Entry(middle_frame, textvariable=fn, width=20)
-e1.grid(row=0, column=1, padx=5, pady=5)
-
 Label(middle_frame, text="First Name").grid(row=0, column=0, padx=5, pady=5, sticky=W)
 e1 = Entry(middle_frame, textvariable=fn, width=20)
 e1.grid(row=0, column=1, padx=5, pady=5)
@@ -221,21 +225,32 @@ Label(middle_frame, text="GPA").grid(row=1, column=2, padx=5, pady=5, sticky=W)
 e4 = Entry(middle_frame, textvariable=gpa, width=20)
 e4.grid(row=1, column=3, padx=5, pady=5)
 
+Label(middle_frame, text="Course").grid(row=2, column=0, padx=5, pady=5, sticky=W)
+e5 = Entry(middle_frame, textvariable=course, width=20)
+e5.grid(row=2, column=1, padx=5, pady=5)
+
+Label(middle_frame, text="Teacher").grid(row=2, column=2, padx=5, pady=5, sticky=W)
+e6 = Entry(middle_frame, textvariable=teacher, width=20)
+e6.grid(row=2, column=3, padx=5, pady=5)
 
 # Treeview for students display
-tree = ttk.Treeview(listbox_frame, columns=("ID", "First Name", "Last Name", "Term", "GPA", "Grade"), show="headings")
+tree = ttk.Treeview(listbox_frame, columns=("ID", "First Name", "Last Name", "Term", "GPA", "Grade", "Course", "Teacher"), show="headings")
 tree.heading("ID", text="ID")
 tree.heading("First Name", text="First Name")
 tree.heading("Last Name", text="Last Name")
 tree.heading("Term", text="Term")
 tree.heading("GPA", text="GPA")
 tree.heading("Grade", text="Grade")
+tree.heading("Course", text="Course")
+tree.heading("Teacher", text="Teacher")
 tree.column("ID", width=20)
-tree.column("First Name", width=120)
-tree.column("Last Name", width=120)
-tree.column("Term", width=100)
-tree.column("GPA", width=60)
-tree.column("Grade", width=60)
+tree.column("First Name", width=80)
+tree.column("Last Name", width=80)
+tree.column("Term", width=50)
+tree.column("GPA", width=50)
+tree.column("Grade", width=50)
+tree.column("Course", width=80)
+tree.column("Teacher", width=80)
 tree.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
 # Bind a row click to get data
